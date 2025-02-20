@@ -184,11 +184,6 @@ const AudienceSchema = new Schema<IAudience>({
   timestamps: true,
 });
 
-// Indexes for better query performance
-AudienceSchema.index({ email: 1 });
-AudienceSchema.index({ username: 1 });
-AudienceSchema.index({ lastActive: -1 });
-AudienceSchema.index({ 'socialStats.totalFollowers': -1 });
 
 const AudienceModel = mongoose.models.Audience || mongoose.model<IAudience>('Audience', AudienceSchema);
 

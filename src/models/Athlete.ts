@@ -291,12 +291,12 @@ const AthleteSchema = new Schema<IAthlete>({
 });
 
 // Indexes
-AthleteSchema.index({ username: 1 });
-AthleteSchema.index({ email: 1 });
-AthleteSchema.index({ 'career.sport': 1 });
-AthleteSchema.index({ ranking: -1 });
-AthleteSchema.index({ verificationStatus: 1 });
-AthleteSchema.index({ featuredAthlete: 1 });
+// AthleteSchema.index({ username: 1 });
+// AthleteSchema.index({ email: 1 });
+// AthleteSchema.index({ 'career.sport': 1 });
+// AthleteSchema.index({ ranking: -1 });
+// AthleteSchema.index({ verificationStatus: 1 });
+// AthleteSchema.index({ featuredAthlete: 1 });
 
 const AthleteModel = mongoose.models.Athlete || mongoose.model<IAthlete>('Athlete', AthleteSchema);
 
