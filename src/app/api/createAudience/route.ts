@@ -1,20 +1,16 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import AudienceModel from "@/models/Audience";
 import {connectDB} from "@/utils/connectDB";
 import bcrypt from "bcryptjs";
 
-export async function POST(req) {
+export async function POST(req: NextRequest) {
   try {
     await connectDB(); // Ensure DB is connected
 
     const body = await req.json();
     const { email, username, name, password, avatar, bio } = body;
 
-    // Validate required fields
-    if (!email || !username || !name || !password) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
-    }
-
+    
     // Check if audience already exists
     const existingAudience = await AudienceModel.findOne({ $or: [{ email }, { username }] });
     if (existingAudience) {

@@ -10,10 +10,10 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { email, username, name, password, phone, dateOfBirth, nationality, location, profileImage, career, stats, bio } = body;
 
-    // Validate required fields
-    if (!email || !username || !name || !password || !phone || !dateOfBirth || !nationality || !profileImage || !career) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
-    }
+    // // Validate required fields
+    // if (!email || !username || !name || !password || !phone || !dateOfBirth || !nationality || !profileImage || !career) {
+    //   return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    // }
 
     // Check if athlete already exists
     const existingAthlete = await AthleteModel.findOne({ $or: [{ email }, { username }] });
