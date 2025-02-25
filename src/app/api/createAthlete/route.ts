@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import AthleteModel from "@/models/Athlete";
 import bcrypt from "bcryptjs";
 import { connectDB } from "@/utils/connectDB";
 
-export async function POST(req: any) {
+export async function POST(req: NextRequest) {
   try {
     await connectDB(); // Ensure DB is connected
 

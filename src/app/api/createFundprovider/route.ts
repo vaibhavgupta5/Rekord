@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import FundProviderModel from "@/models/FundProvider";
 import { connectDB } from "@/utils/connectDB";
 
-export async function POST(req: any) {
+export async function POST(req: NextRequest) {
   try {
     await connectDB();
     const body = await req.json();

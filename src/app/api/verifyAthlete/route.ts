@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 import AthleteModel from "@/models/Athlete";
 import { connectDB } from "@/utils/connectDB";
 
-export async function PUT(req) {
+import { NextRequest } from "next/server";
+
+export async function PUT(req: NextRequest) {
   try {
     await connectDB(); // Ensure DB is connected
 
