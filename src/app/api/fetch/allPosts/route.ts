@@ -9,8 +9,8 @@ export async function GET() {
     // Fetch posts sorted by newest first
     const posts = await PostModel.find()
       .sort({ createdAt: -1 }) // Sort by newest first
-      .populate("author", "name profileImage") // Populate author details
-      .populate("comments", "content createdAt") // Populate comments (optional)
+      .populate("author")
+       // Populate author details
       .limit(50); // Limit results (adjust as needed)
 
     return NextResponse.json({ success: true, posts }, { status: 200 });

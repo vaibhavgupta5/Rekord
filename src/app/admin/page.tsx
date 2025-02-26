@@ -1,305 +1,252 @@
-// app/admin/athlete-verification/page.tsx
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Search, Check, X, FileText, User, Filter } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import axios from "axios";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogFooter,
-} from "@/components/ui/dialog";
-import Image from "next/image";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
+import { VerifiedIcon, UserIcon, AlertTriangleIcon, CheckCircle2Icon, XCircleIcon, FilterIcon } from "lucide-react";
+import axios from 'axios';
 
+export default function AthletesVerificationPage() {
+  const [athletes, setAthletes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('all');
 
-// Mock data for demonstration
-const mockAthletes = [
-    {
-        id: "1",
-        name: "John Doe",
-        sport: "Basketball",
-        submittedAt: "2025-02-20T10:30:00",
-        certificateUrl: "/certificates/john-doe.pdf",
-        profileImage: "/api/placeholder/80/80",
-    },
-    {
-        id: "2",
-        name: "Sarah Johnson",
-        sport: "Swimming",
-        submittedAt: "2025-02-22T14:45:00",
-        certificateUrl: "/certificates/sarah-johnson.pdf",
-        profileImage: "/api/placeholder/80/80",
-    },
-    {
-        id: "3",
-        name: "Michael Chen",
-        sport: "Tennis",
-        submittedAt: "2025-02-23T09:15:00",
-        certificateUrl: "/certificates/michael-chen.pdf",
-        profileImage: "/api/placeholder/80/80",
-    },
-    {
-        id: "4",
-        name: "Emily Rodriguez",
-        sport: "Soccer",
-        submittedAt: "2025-02-24T16:20:00",
-        certificateUrl: "/certificates/emily-rodriguez.pdf",
-        profileImage: "/api/placeholder/80/80",
-    },
-];
-
-console.log(mockAthletes)
-
-export default function AthleteVerificationPage() {
-    const [athletes, setAthletes] = useState([]);
-    const [searchQuery, setSearchQuery] = useState("");
-    const [selectedSport, setSelectedSport] = useState("");
-    const [selectedAthlete, setSelectedAthlete] = useState<typeof mockAthletes[0] | null>(null);
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-
-    
-    const getUnverifiedAthletes = async () => {
-        const response = await axios.get("/api/getUnverifiedAthlete");
+  useEffect(() => {
+    const fetchAthletes = async () => {
+      try {
+        const response = await fetch('/api/getUnverifiedAthlete');
+        const data = await response.json();
         
-        console.log(response.data.unverifiedAthlete);
-        
-            }
-        
-        useEffect(() => {
-        getUnverifiedAthletes();
-
-        }, []);
-
-    const filteredAthletes = athletes.filter(athlete => {
-        const matchesSearch = athlete.name.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesSport = !selectedSport || athlete.sport === selectedSport;
-        return matchesSearch && matchesSport;
-    });
-
-    
-    // Handle athlete verification
-    const handleVerify = (id: string) => {
-        setAthletes(athletes.filter(athlete => athlete.id !== id));
+        if (data.unverifiedAthlete) {
+          setAthletes(data.unverifiedAthlete);
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching athletes:", error);
+        setLoading(false);
+      }
     };
-    
-    // Open certificate dialog
-    const openCertificateDialog = (athlete: typeof mockAthletes[0]) => {
-        setSelectedAthlete(athlete);
-        setIsDialogOpen(true);
-    };
-    
-    // Format date for display
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return date.toLocaleDateString() + " at " + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    };
-    
-    // Get unique sports for filter
-    const sports = Array.from(new Set(athletes.map(athlete => athlete.sport)));
 
-    return (
-        <div className="bg-white min-h-screen">
-            <header className="bg-orange-600 py-6">
-                <div className="container mx-auto px-4">
-                    <h1 className="text-white text-2xl font-bold">Athlete Verification Dashboard</h1>
-                </div>
-            </header>
-            
-            <main className="container mx-auto px-4 py-8">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                >
-                    <div className="bg-orange-50 rounded-lg p-6 mb-8">
-                        <div className="flex flex-col md:flex-row gap-4">
-                            <div className="relative flex-1">
-                                <Search className="absolute left-3 top-3 h-4 w-4 text-orange-500" />
-                                <Input
-                                    placeholder="Search athletes..."
-                                    className="pl-10 border-orange-200 focus:border-orange-500"
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                />
-                            </div>
-                            
-                            <div className="w-full md:w-64">
-                                <Select value={selectedSport} onValueChange={setSelectedSport}>
-                                    <SelectTrigger className="border-orange-200 focus:border-orange-500">
-                                        <SelectValue placeholder="Filter by sport" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">All Sports</SelectItem>
-                                        {sports.map(sport => (
-                                            <SelectItem key={sport} value={sport}>{sport}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
-                        
-                        <div className="mt-4 flex justify-between items-center">
-                            <p className="text-orange-800">
-                                <span className="font-semibold">{filteredAthletes.length}</span> athletes awaiting verification
-                            </p>
-                            
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className="text-orange-600 border-orange-300 hover:bg-orange-50"
-                                onClick={() => {
-                                    setSearchQuery("");
-                                    setSelectedSport("");
-                                }}
-                            >
-                                <Filter className="h-4 w-4 mr-2" />
-                                Reset Filters
-                            </Button>
-                        </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <AnimatePresence>
-                            {filteredAthletes.map((athlete) => (
-                                <motion.div
-                                    key={athlete._id}
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                                    transition={{ duration: 0.3 }}
-                                >
-                                    <Card className="overflow-hidden border-orange-100 hover:shadow-md transition-shadow">
-                                        <CardContent className="p-6">
-                                            <div className="flex items-center gap-4">
-                                                <div className="relative">
-                                                    <Image
-                                                        src={athlete?.profileImage}
-                                                        alt={athlete?.name}
-                                                        width={64}
-                                                        height={64}
-                                                        className="w-16 h-16 rounded-full object-cover border-2 border-orange-200"
-                                                    />
-                                                    <Badge className="absolute -top-2 -right-2 bg-orange-600">
-                                                        New
-                                                    </Badge>
-                                                </div>
-                                                
-                                                <div className="flex-1 min-w-0">
-                                                    <h3 className="font-semibold text-lg truncate">{athlete.name}</h3>
-                                                    <p className="text-orange-600">{athlete.sport}</p>
-                                                    <p className="text-sm text-gray-500 mt-1">
-                                                        Submitted {formatDate(athlete.submittedAt)}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            
-                                            <div className="mt-4 flex gap-3">
-                                                <Button 
-                                                    variant="outline" 
-                                                    size="sm"
-                                                    className="flex-1 border-orange-200 text-orange-700 hover:bg-orange-50 hover:text-orange-800"
-                                                    onClick={() => openCertificateDialog(athlete)}
-                                                >
-                                                    <FileText className="h-4 w-4 mr-2" />
-                                                    View Certificate
-                                                </Button>
-                                            </div>
-                                        </CardContent>
-                                        
-                                        <CardFooter className="p-0">
-                                            <Button
-                                                className="w-full rounded-none bg-orange-600 hover:bg-orange-700 text-white py-4"
-                                                onClick={() => handleVerify(athlete.id)}
-                                            >
-                                                <Check className="h-5 w-5 mr-2" />
-                                                Verify Athlete
-                                            </Button>
-                                        </CardFooter>
-                                    </Card>
-                                </motion.div>
-                            ))}
-                        </AnimatePresence>
-                        
-                        {filteredAthletes.length === 0 && (
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                className="col-span-full flex flex-col items-center justify-center py-16 text-gray-500"
-                            >
-                                <User className="h-16 w-16 text-orange-200 mb-4" />
-                                <h3 className="text-lg font-medium mb-2">No athletes found</h3>
-                                <p className="text-center max-w-md">
-                                    {searchQuery || selectedSport
-                                        ? "Try adjusting your search or filters to find athletes awaiting verification."
-                                        : "All athletes have been verified!"}
-                                </p>
-                            </motion.div>
-                        )}
-                    </div>
-                </motion.div>
-            </main>
-            
-            {/* Certificate Dialog */}
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogContent className="max-w-4xl">
-                    <DialogHeader>
-                        <DialogTitle className="text-orange-800">
-                            {selectedAthlete?.name} Certificate
-                        </DialogTitle>
-                    </DialogHeader>
-                    
-                    <div className="bg-orange-50 p-4 rounded-md min-h-96 flex items-center justify-center">
-                        {/* Placeholder for certificate display */}
-                        <div className="text-center">
-                            <FileText className="h-16 w-16 text-orange-400 mx-auto mb-4" />
-                            <p className="text-orange-800 font-medium">
-                                Certificate preview would appear here
-                            </p>
-                            <p className="text-sm text-gray-600 mt-2">
-                                In a real application, this would display the PDF certificate or image upload
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <DialogFooter className="flex flex-col sm:flex-row gap-3">
-                        <Button
-                            variant="outline"
-                            className="sm:flex-1 border-orange-200 text-orange-700 hover:bg-orange-50"
-                            onClick={() => setIsDialogOpen(false)}
-                        >
-                            <X className="h-4 w-4 mr-2" />
-                            Close
-                        </Button>
-                        <Button
-                            className="sm:flex-1 bg-orange-600 hover:bg-orange-700 text-white"
-                            onClick={() => {
-                                if (selectedAthlete) {
-                                    handleVerify(selectedAthlete.id);
-                                    setIsDialogOpen(false);
-                                }
-                            }}
-                        >
-                            <Check className="h-4 w-4 mr-2" />
-                            Verify Athlete
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
+    fetchAthletes();
+  }, []);
+
+  const handleVerify = async (id: string) => {
+    try {
+
+      const response = axios.put('/api/verifyAthlete', {
+        athleteId: id, adminId:"huhd"})
+
+    console.log(response)
+      
+      // Optimistic UI update
+      setAthletes(athletes.map(athlete => 
+        athlete._id === id 
+          ? {...athlete, verificationStatus: status} 
+          : athlete
+      ));
+    } catch (error) {
+      console.error("Error verifying athlete:", error);
+    }
+  };
+
+  const filteredAthletes = filter === 'all' 
+    ? athletes 
+    : athletes.filter(athlete => athlete.verificationStatus === filter);
+
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+  
+  const item = {
+    hidden: { y: 20, opacity: 0 },
+    show: { y: 0, opacity: 1 }
+  };
+
+  return (
+    <div className="container px-4 py-6 mx-auto max-w-7xl">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4"
+      >
+        <div>
+          <h1 className="text-3xl font-bold text-orange-600">Athlete Verification</h1>
+          <p className="text-gray-500 mt-1">Review and verify athlete profiles</p>
         </div>
-    );
+        
+        <div className="flex items-center gap-2 bg-white p-2 rounded-lg shadow-sm">
+          <FilterIcon size={16} className="text-gray-500" />
+          <select 
+            className="bg-transparent text-sm border-none focus:ring-0 outline-none"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+          >
+            <option value="all">All Athletes</option>
+            <option value="unverified">Unverified</option>
+            <option value="pending">Pending</option>
+            <option value="verified">Verified</option>
+          </select>
+        </div>
+      </motion.div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {loading ? (
+          // Loading skeletons
+          Array.from({ length: 6 }).map((_, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3, delay: i * 0.05 }}
+              className="bg-gray-100 rounded-lg h-64 animate-pulse"
+            />
+          ))
+        ) : filteredAthletes.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="col-span-full flex flex-col items-center justify-center p-12 bg-gray-50 rounded-lg"
+          >
+            <AlertTriangleIcon className="h-12 w-12 text-orange-400 mb-4" />
+            <h3 className="text-xl font-medium text-gray-900">No athletes found</h3>
+            <p className="text-gray-500 text-center mt-2">
+              {filter === 'all' 
+                ? "There are no athletes in the system." 
+                : `No athletes with ${filter} status found.`}
+            </p>
+          </motion.div>
+        ) : (
+          <motion.div 
+            variants={container}
+            initial="hidden"
+            animate="show"
+            className="col-span-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {filteredAthletes.map((athlete) => (
+              <motion.div key={athlete._id} variants={item}>
+                <Card className="overflow-hidden border-orange-100 hover:shadow-md transition-shadow duration-300">
+                  <div className="h-24 bg-gradient-to-r from-orange-500 to-orange-600 relative">
+                    {athlete.coverImage && (
+                      <div className="absolute inset-0 bg-center bg-cover" style={{ backgroundImage: `url(${athlete.coverImage})` }} />
+                    )}
+                  </div>
+                  
+                  <div className="flex justify-between px-6">
+                    <Avatar className="h-16 w-16 ring-4 ring-white -mt-8">
+                      <AvatarImage src={athlete.profileImage} />
+                      <AvatarFallback className="bg-orange-200 text-orange-700">
+                        {athlete.name.split(' ').map(n => n[0]).join('')}
+                      </AvatarFallback>
+                    </Avatar>
+                    
+                    <Badge className={`mt-2 ${
+                      athlete.verificationStatus === 'verified' 
+                        ? 'bg-green-100 text-green-800' 
+                        : athlete.verificationStatus === 'pending'
+                        ? 'bg-amber-100 text-amber-800'
+                        : 'bg-gray-100 text-gray-800'
+                    }`}>
+                      {athlete.verificationStatus === 'verified' && <CheckCircle2Icon className="mr-1 h-3 w-3" />}
+                      {athlete.verificationStatus.charAt(0).toUpperCase() + athlete.verificationStatus.slice(1)}
+                    </Badge>
+                  </div>
+                  
+                  <CardHeader className="pt-2">
+                    <CardTitle className="text-xl flex items-center gap-1">
+                      {athlete.name}
+                      {athlete.featuredAthlete && (
+                        <VerifiedIcon className="h-4 w-4 text-blue-500" />
+                      )}
+                    </CardTitle>
+                    <CardDescription className="flex items-center gap-1">
+                      @{athlete.username} • 
+                      <span className="font-medium text-orange-600">{athlete.career.sport}</span>
+                    </CardDescription>
+                  </CardHeader>
+                  
+                  <CardContent className="text-sm space-y-2">
+                    <div className="flex justify-between">
+                      <div>
+                        <div className="text-gray-500">Level</div>
+                        <div className="font-medium">{athlete.career.level.charAt(0).toUpperCase() + athlete.career.level.slice(1)}</div>
+                      </div>
+                      <div>
+                        <div className="text-gray-500">Position</div>
+                        <div className="font-medium">{athlete.career.position || '-'}</div>
+                      </div>
+                      <div>
+                        <div className="text-gray-500">Matches</div>
+                        <div className="font-medium">{athlete.stats.totalMatches}</div>
+                      </div>
+                    </div>
+                    
+                    <Separator />
+                    
+                    <div>
+                      <div className="text-gray-500 mb-1">Certifications</div>
+                      <div className="flex flex-wrap gap-1">
+                        {athlete.certifications && athlete.certifications.length > 0 ? (
+                          athlete.certifications.map((cert, i) => (
+                            <Badge key={i} variant="outline" className="text-xs">
+                              {cert.type}
+                            </Badge>
+                          ))
+                        ) : (
+                          <span className="text-gray-400 text-xs">No certifications</span>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                  
+                  <CardFooter className="flex gap-2">
+                    {athlete.verificationStatus !== 'verified' && (
+                      <Button 
+                        variant="default" 
+                        size="sm" 
+                        className="flex-1 bg-green-600 hover:bg-green-700"
+                        onClick={() => handleVerify(athlete._id, 'verified')}
+                      >
+                        <CheckCircle2Icon className="mr-2 h-4 w-4" />
+                        Verify
+                      </Button>
+                    )}
+                    
+                    {athlete.verificationStatus !== 'rejected' && athlete.verificationStatus !== 'verified' && (
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex-1 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+                        onClick={() => handleVerify(athlete._id, 'rejected')}
+                      >
+                        <XCircleIcon className="mr-2 h-4 w-4" />
+                        Reject
+                      </Button>
+                    )}
+                    
+                    {athlete.verificationStatus === 'verified' && (
+                      <Button variant="outline" size="sm" className="flex-1">
+                        View Profile
+                      </Button>
+                    )}
+                  </CardFooter>
+                </Card>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+      </div>
+    </div>
+  );
 }
