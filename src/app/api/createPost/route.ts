@@ -20,27 +20,57 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, message: "Only athletes can post" }, { status: 403 });
     }
 
-    // Create the post
+    // Process media - if it's a string URL, convert to the expected format
+    const mediaArray = media ? [
+      {
+        url: media,
+        // Simple media type detection based on URL extension
+        type: getMediaType(media)
+      }
+    ] : [];
+
+    // Create the post with the updated schema
     const newPost = await PostModel.create({
       author: athleteId,
       content,
-      media,
+      media: mediaArray,
       likes: [],
       comments: [],
-      likeCount: 0,
-      commentCount: 0,
+      // likeCount and commentCount will be set by the pre-save middleware
     });
-
-
-   
-    athlete.posts.push(newPost._id);
     
+    // Update the athlete's posts array
+    athlete.posts.push(newPost._id);
     await athlete.save();
-
-
-    return NextResponse.json({ success: true, message: "Post created successfully", post: newPost }, { status: 201 });
+    
+    return NextResponse.json({ 
+      success: true, 
+      message: "Post created successfully", 
+      post: newPost 
+    }, { status: 201 });
   } catch (error) {
     console.error("Error creating post:", error);
-    return NextResponse.json({ success: false, message: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ 
+      success: false, 
+      message: "Internal server error" 
+    }, { status: 500 });
   }
+}
+
+// Helper function to determine media type from URL
+function getMediaType(url: string): "image" | "video" | "other" {
+  const lowercaseUrl = url.toLowerCase();
+  
+  // Check for image extensions
+  if (lowercaseUrl.match(/\.(jpeg|jpg|gif|png|svg|webp)(\?.*)?$/)) {
+    return "image";
+  }
+  
+  // Check for video extensions
+  if (lowercaseUrl.match(/\.(mp4|webm|ogg|mov|avi|wmv)(\?.*)?$/)) {
+    return "video";
+  }
+  
+  // Default to other if can't determine
+  return "other";
 }

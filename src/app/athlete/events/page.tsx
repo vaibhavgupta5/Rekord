@@ -64,7 +64,7 @@ export default function EventsPage() {
     const fetchEvents = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/fetch/allEvents');
+        const response = await fetch('/api/fetch/allEventsO');
         const data: ApiResponse = await response.json();
         
         if (data.success) {
@@ -184,7 +184,7 @@ export default function EventsPage() {
                 <h3 className="text-2xl font-bold mb-2">{liveEvents[currentSlide].title}</h3>
                 <div className="flex items-center mb-2">
                   <MapPin className="w-4 h-4 mr-1 text-orange-400" />
-                  <span className="text-sm">{liveEvents[currentSlide].location.city}, {liveEvents[currentSlide].location.country}</span>
+                  <span className="text-sm">{liveEvents[currentSlide].location.city }, {liveEvents[currentSlide].location.country}</span>
                 </div>
                 <div className="flex items-center">
                   <Video className="w-4 h-4 mr-1 text-orange-400" />
