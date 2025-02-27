@@ -16,36 +16,6 @@ interface ISponsorship {
   }[];
 }
 
-interface IEvent {
-  title: string;
-  description: string;
-  date: Date;
-  location: {
-    address: string;
-    city: string;
-    country: string;
-    coordinates?: {
-      latitude: number;
-      longitude: number;
-    };
-  };
-  type: 'tournament' | 'exhibition' | 'training' | 'other';
-  status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
-  participants: Types.ObjectId[];
-  budget: number;
-  ticketing?: {
-    available: boolean;
-    price: number;
-    totalTickets: number;
-    soldTickets: number;
-  };
-  streaming?: {
-    platform: string;
-    url: string;
-    viewerCount: number;
-  };
-}
-
 interface IFundProvider extends Document {
   // Organization Info
   companyName: string;
@@ -77,8 +47,8 @@ interface IFundProvider extends Document {
     };
   };
   
-  // Events
-  eventsOrganized: IEvent[];
+  // Events - Updated to use Event model
+  eventsOrganized: Types.ObjectId[];
   upcomingEvents: Types.ObjectId[];
   
   // Athletes
@@ -203,73 +173,10 @@ const FundProviderSchema = new Schema<IFundProvider>({
     },
   },
   
-  // Events
+  // Events - Updated to use Event model
   eventsOrganized: [{
-    title: {
-      type: String,
-      required: true,
-    },
-    description: {
-      type: String,
-      required: true,
-    },
-    date: {
-      type: Date,
-      required: true,
-    },
-    location: {
-      address: String,
-      city: {
-        type: String,
-        required: true,
-      },
-      country: {
-        type: String,
-        required: true,
-      },
-      coordinates: {
-        latitude: Number,
-        longitude: Number,
-      },
-    },
-    type: {
-      type: String,
-      enum: ['tournament', 'exhibition', 'training', 'other'],
-      required: true,
-    },
-    status: {
-      type: String,
-      enum: ['upcoming', 'ongoing', 'completed', 'cancelled'],
-      default: 'upcoming',
-    },
-    participants: [{
-      type: Schema.Types.ObjectId,
-      ref: 'Athlete',
-    }],
-    budget: {
-      type: Number,
-      required: true,
-    },
-    ticketing: {
-      available: {
-        type: Boolean,
-        default: false,
-      },
-      price: Number,
-      totalTickets: Number,
-      soldTickets: {
-        type: Number,
-        default: 0,
-      },
-    },
-    streaming: {
-      platform: String,
-      url: String,
-      viewerCount: {
-        type: Number,
-        default: 0,
-      },
-    },
+    type: Schema.Types.ObjectId,
+    ref: 'Event',
   }],
   upcomingEvents: [{
     type: Schema.Types.ObjectId,
@@ -305,7 +212,6 @@ FundProviderSchema.index({ companyName: 1 });
 FundProviderSchema.index({ email: 1 });
 FundProviderSchema.index({ verificationStatus: 1 });
 FundProviderSchema.index({ totalInvestment: -1 });
-FundProviderSchema.index({ 'eventsOrganized.date': 1 });
 
 const FundProviderModel = mongoose.models.FundProvider || mongoose.model<IFundProvider>('FundProvider', FundProviderSchema);
 

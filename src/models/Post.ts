@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema, Types } from "mongoose";
+import AthleteModel from "@/models/Athlete"; // Import the Athlete model
 
 interface IPost extends Document {
   author: Types.ObjectId;
@@ -16,7 +17,7 @@ const PostSchema = new Schema<IPost>(
   {
     author: {
       type: Schema.Types.ObjectId,
-      ref: "Athlete", // Refers to AthleteModel
+      ref: "Athlete",
       required: true,
     },
     content: {

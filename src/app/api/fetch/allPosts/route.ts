@@ -1,20 +1,21 @@
 import { NextResponse } from "next/server";
-import PostModel from "@/models/Post";
+import mongoose from "mongoose";
 import { connectDB } from "@/utils/connectDB";
+import PostModel from "@/models/Post";
 
 export async function GET() {
   try {
     await connectDB();
-
-    // Fetch posts sorted by newest first
+    
+    // Now models should be properly registered
+    
     const posts = await PostModel.find()
-      .sort({ createdAt: -1 }) // Sort by newest first
+      .sort({ createdAt: -1 })
       .populate("author")
-       // Populate author details
-      .limit(50); // Limit results (adjust as needed)
+      .limit(50);
 
     return NextResponse.json({ success: true, posts }, { status: 200 });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error fetching posts:", error);
     return NextResponse.json({ success: false, message: "Internal server error" }, { status: 500 });
   }

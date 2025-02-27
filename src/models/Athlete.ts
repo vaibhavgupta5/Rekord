@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema, Types } from "mongoose";
+import PostModel from "@/models/Post";
 
 interface ICareer {
   sport: string;
@@ -32,15 +33,6 @@ interface ICertification {
   verifiedAt?: Date;
 }
 
-interface IEvent {
-  title: string;
-  date: Date;
-  location: string;
-  type: string;
-  status: string;
-  participants: Types.ObjectId[];
-}
-
 interface IAthlete extends Document {
   // Basic Info
   email: string;
@@ -68,8 +60,8 @@ interface IAthlete extends Document {
   longVideos: Types.ObjectId[];
   posts: Types.ObjectId[];
   
-  // Events
-  eventsOrganized: IEvent[];
+  // Events - Updated to use Event model
+  eventsOrganized: Types.ObjectId[];
   eventsParticipated: Types.ObjectId[];
   
   // Social & Engagement
@@ -216,27 +208,10 @@ const AthleteSchema = new Schema<IAthlete>({
     ref: 'Post',
   }],
 
-  // Events
+  // Events - Updated to use Event model
   eventsOrganized: [{
-    title: {
-      type: String,
-      required: true,
-    },
-    date: {
-      type: Date,
-      required: true,
-    },
-    location: String,
-    type: String,
-    status: {
-      type: String,
-      enum: ['upcoming', 'ongoing', 'completed', 'cancelled'],
-      default: 'upcoming',
-    },
-    participants: [{
-      type: Schema.Types.ObjectId,
-      ref: 'Audience',
-    }],
+    type: Schema.Types.ObjectId,
+    ref: 'Event',
   }],
   eventsParticipated: [{
     type: Schema.Types.ObjectId,

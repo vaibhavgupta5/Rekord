@@ -2,8 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/utils/connectDB";
 import FundProviderModel from "@/models/FundProvider";
-
-// Connect to MongoDB
+import EventModel from "@/models/Event";
 
 export async function POST(req: NextRequest) {
   try {
@@ -34,8 +33,8 @@ export async function POST(req: NextRequest) {
       );
     }
     
-    // Create new event object
-    const newEvent = {
+    // Create new event document
+    const newEvent = new EventModel({
       title: eventData.title,
       description: eventData.description,
       date: new Date(eventData.date),
@@ -47,14 +46,23 @@ export async function POST(req: NextRequest) {
       },
       type: eventData.type,
       status: eventData.status || "upcoming",
+      organizer: fundProviderId, // Reference to the fund provider
       participants: eventData.participants || [],
       budget: eventData.budget,
       ticketing: eventData.ticketing,
       streaming: eventData.streaming
-    };
+    });
     
-    // Add the event to the fund provider's eventsOrganized array
-    fundProvider.eventsOrganized.push(newEvent);
+    // Save the new event document
+    const savedEvent = await newEvent.save();
+    
+    // Add the event ID to the fund provider's eventsOrganized array
+    fundProvider.eventsOrganized.push(savedEvent._id);
+    
+    // If the event is upcoming, also add it to upcomingEvents
+    if (savedEvent.status === 'upcoming') {
+      fundProvider.upcomingEvents.push(savedEvent._id);
+    }
     
     // Update lastActive field
     fundProvider.lastActive = new Date();
@@ -66,7 +74,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       message: "Event created successfully",
-      event: fundProvider.eventsOrganized[fundProvider.eventsOrganized.length - 1]
+      event: savedEvent
     }, { status: 201 });
     
   } catch (error) {
