@@ -35,91 +35,93 @@ import {
 const athletes = [
   {
     id: 1,
-    name: "Alex Morgan",
-    sport: "Soccer",
+    name: "Neeraj Chopra",
+    sport: "Javelin Throw",
     image: "/api/placeholder/150/150",
-    bio: "Olympic gold medalist needing support for international tournament travel",
-    supporters: 243,
+    bio: "Olympic gold medalist seeking support for international training camps.",
+    supporters: 512,
     needsSupport: ["financial", "training"],
     supporterTypes: ["financial", "technical"]
   },
   {
     id: 2,
-    name: "Darnell Washington",
+    name: "Hima Das",
     sport: "Track & Field",
     image: "/api/placeholder/150/150",
-    bio: "Rising star sprinter seeking coaching and equipment sponsorship",
-    supporters: 128,
+    bio: "India's sprinting sensation looking for sponsorship for global competitions.",
+    supporters: 276,
     needsSupport: ["financial", "technical", "pr"],
     supporterTypes: ["training"]
   },
   {
     id: 3,
-    name: "Naomi Chen",
+    name: "Sajan Prakash",
     sport: "Swimming",
     image: "/api/placeholder/150/150",
-    bio: "National champion working towards Olympic qualification",
-    supporters: 315,
+    bio: "First Indian swimmer to qualify for the Olympics, aiming for medal glory.",
+    supporters: 342,
     needsSupport: ["training", "pr"],
     supporterTypes: ["financial", "pr", "training"]
   },
   {
     id: 4,
-    name: "Carlos Rodriguez",
-    sport: "Basketball",
+    name: "Pranati Nayak",
+    sport: "Gymnastics",
     image: "/api/placeholder/150/150",
-    bio: "College athlete looking for professional development resources",
-    supporters: 98,
+    bio: "Commonwealth Games medalist striving for excellence in artistic gymnastics.",
+    supporters: 189,
     needsSupport: ["financial", "technical"],
     supporterTypes: ["technical"]
   }
 ];
+
 
 // Demo data for supporter posts
 const supporterPosts = [
   {
     id: 1,
     supporter: {
-      name: "Jane Wilson",
+      name: "Rajesh Verma",
       image: "/api/placeholder/150/150",
       type: "financial"
     },
     athlete: {
-      name: "Alex Morgan",
-      sport: "Soccer"
+      name: "Neeraj Chopra",
+      sport: "Javelin Throw"
     },
-    content: "Proud to support Alex's journey to the international tournament! Let's bring home the gold! 🏆",
+    content: "Proud to support Neeraj’s training for the upcoming championships! Let's bring home the gold! 🏆",
     timeAgo: "2h ago"
   },
   {
     id: 2,
     supporter: {
-      name: "Mike Johnson",
+      name: "Amit Sharma",
       image: "/api/placeholder/150/150",
       type: "training"
     },
     athlete: {
-      name: "Naomi Chen",
-      sport: "Swimming"
+      name: "Hima Das",
+      sport: "Track & Field"
     },
-    content: "Just finished our 3rd training session this week. Naomi's technique is improving dramatically!",
+    content: "Just wrapped up another intense training session with Hima. Her sprinting form is getting even sharper!",
     timeAgo: "5h ago"
   },
   {
     id: 3,
     supporter: {
-      name: "Sarah Thompson",
+      name: "Priya Iyer",
       image: "/api/placeholder/150/150",
       type: "pr"
     },
     athlete: {
-      name: "Darnell Washington",
-      sport: "Track & Field"
+      name: "Sajan Prakash",
+      sport: "Swimming"
     },
-    content: "Arranged for Darnell to appear on SportsTalk next week. Can't wait for everyone to hear his story!",
+    content: "Excited to have arranged a feature for Sajan on SportsIndia this week. His journey deserves to be heard! 🎤",
     timeAgo: "1d ago"
   }
 ];
+
 
 // Support type icons and colors
 const supportTypes = {
@@ -133,7 +135,7 @@ export default function FanFuelPage() {
   const [activeTab, setActiveTab] = useState("discover");
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white mb-20">
       {/* Hero Section */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
