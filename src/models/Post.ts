@@ -16,7 +16,7 @@ interface IPost extends Document {
 const PostSchema = new Schema<IPost>(
   {
     author: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Athlete",
       required: true,
     },

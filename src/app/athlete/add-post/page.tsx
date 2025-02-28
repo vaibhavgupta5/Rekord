@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Upload, SendHorizontal, ImagePlus } from "lucide-react";
+import { Upload, SendHorizontal, ImagePlus, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
 
@@ -18,6 +18,7 @@ export default function CreatePost() {
   const [media, setMedia] = useState("");
   const [athleteId, setAthleteId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -29,7 +30,7 @@ export default function CreatePost() {
         setAthleteId(athlete._id);
       } else {
         // Redirect if not authenticated
-        toast( "Authentication required",{
+        toast("Authentication required", {
           description: "Please login to create a post",
         });
         router.push("/login");
@@ -41,37 +42,68 @@ export default function CreatePost() {
     e.preventDefault();
     
     if (content.trim() === "") {
-      toast("Error",{
-                description: "Post content cannot be empty",
+      toast("Error", {
+        description: "Post content cannot be empty",
       });
       return;
     }
-
     setIsLoading(true);
-
     try {
-        console.log(athleteId)
       const response = await axios.post("/api/createPost", {
         content, media, athleteId,
       });
-
       if (response.data.success) {
-        toast( "Success",
-          {description: "Post created successfully",
+        toast("Success", {
+          description: "Post created successfully",
         });
         router.push("/athlete/home");
       } else {
-        toast( "Error",{
+        toast("Error", {
           description: "Failed to create post",
         });
       }
     } catch (error) {
-      toast( "Error",{
+      toast("Error", {
         description: "Something went wrong",
       });
       console.error("Error creating post:", error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const generateAIContent = async () => {
+    if (content.trim() === "") {
+      toast("Error", {
+        description: "Please provide some initial text to generate content from",
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+    try {
+      const response = await axios.post("/api/generateContent", {
+        prompt: content,
+      });
+      
+      if (response.data.text) {
+        // Append the generated content to existing content with spacing
+        setContent(prev => prev.trim() + "\n\n" + response.data.text.trim());
+        toast("Success", {
+          description: "AI content generated successfully",
+        });
+      } else {
+        toast("Error", {
+          description: "Failed to generate content",
+        });
+      }
+    } catch (error) {
+      toast("Error", {
+        description: "Failed to generate AI content",
+      });
+      console.error("Error generating AI content:", error);
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -89,7 +121,28 @@ export default function CreatePost() {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="content" className="text-orange-400">What's on your mind?</Label>
+                <div className="flex justify-between items-center">
+                  <Label htmlFor="content" className="text-orange-400">What's on your mind?</Label>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={generateAIContent}
+                    disabled={isGenerating}
+                    className="border-orange-500 text-orange-500 hover:bg-orange-950"
+                  >
+                    {isGenerating ? (
+                      <>
+                        <Sparkles className="mr-2 h-4 w-4 animate-spin" />
+                        Generating...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="mr-2 h-4 w-4" />
+                        Generate with AI
+                      </>
+                    )}
+                  </Button>
+                </div>
                 <Textarea
                   id="content"
                   value={content}
@@ -98,9 +151,7 @@ export default function CreatePost() {
                   className="min-h-32 bg-black border-orange-500 focus:border-orange-400 focus:ring-orange-400 placeholder:text-gray-500"
                 />
               </div>
-
               <Separator className="bg-orange-800/50" />
-
               <div className="space-y-2">
                 <Label htmlFor="media" className="text-orange-400">Add Media (URL)</Label>
                 <div className="flex gap-2">
@@ -121,7 +172,6 @@ export default function CreatePost() {
                   </Button>
                 </div>
               </div>
-
               {media && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -150,7 +200,6 @@ export default function CreatePost() {
                   </Button>
                 </motion.div>
               )}
-
               <div className="flex justify-end gap-4 pt-4">
                 <Button
                   type="button"

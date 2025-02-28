@@ -1,15 +1,16 @@
 import { NextResponse } from "next/server";
-import mongoose from "mongoose";
 import { connectDB } from "@/utils/connectDB";
 import PostModel from "@/models/Post";
+import "@/models/Athlete";
 
 export async function GET() {
+  await connectDB();
+
   try {
-    await connectDB();
     
     // Now models should be properly registered
     
-    const posts = await PostModel.find()
+    const posts = await PostModel.find({})
       .sort({ createdAt: -1 })
       .populate("author")
       .limit(50);
