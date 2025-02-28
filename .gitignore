@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+temp_posts.json
+tmp/posts-2d304682-d35c-4ac5-a889-82633682720c.json
+tmp/posts-d10c114a-39e2-41da-9168-df475ee84413.json
+.gitignore
+tmp/posts-16c7f882-ad82-465b-8bcb-944f5ea6c6c6.json
