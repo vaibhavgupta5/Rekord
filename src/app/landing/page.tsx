@@ -15,9 +15,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ChevronRight, Trophy, Users, Zap, Award, Calendar, BarChart, Shield } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 // Hero Section with Text Animation
 const HeroSection = () => {
+
+    const router = useRouter()
+
     const controls = useAnimation();
     const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
     
@@ -147,7 +151,7 @@ const HeroSection = () => {
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
               >
-                <Button size="lg" className="relative overflow-hidden bg-orange-600 hover:bg-orange-700 transition-colors duration-300">
+                <Button size="lg" className="relative overflow-hidden bg-orange-600 hover:bg-orange-700 transition-colors duration-300" onClick={() => router.push("/login")}>
                   <span className="relative text-white font-medium px-6 py-3 block">
                     Join as Athlete
                   </span>
@@ -158,7 +162,7 @@ const HeroSection = () => {
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
               >
-                <Button size="lg" variant="outline" className="border-orange-500 hover:bg-orange-900/20 transition-colors duration-300">
+                <Button size="lg" variant="outline" className="border-orange-500 hover:bg-orange-900/20 transition-colors duration-300"  onClick={() => router.push("/login")}>
                   <span className="text-white font-medium px-6 py-3 block">
                     Become a Supporter
                   </span>

@@ -7,10 +7,8 @@ import ResponsiveNavigation from "@/components/parts/Navigation";
 export default function RouteBasedComponents() {
   const pathname = usePathname();
 
-  // Check if the current route is under /fund/*
-  const isFundRoute = pathname?.startsWith("/fund") || pathname?.startsWith("/admin") || pathname?.startsWith("/landing");
+  const isFundRoute = pathname?.startsWith("/fund") || pathname?.startsWith("/admin") || pathname?.startsWith("/landing") || pathname?.startsWith("/login");
 
-  // Conditionally render Header and Navigation
   return (
     <>
       {!isFundRoute && <Header />}

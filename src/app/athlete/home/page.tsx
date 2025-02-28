@@ -239,7 +239,7 @@ export default function SocialFeed() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white mb-16">
       {/* Header with logo and navigation */}
   
 

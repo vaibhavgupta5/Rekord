@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect, use } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Home, Activity, Plus, Calendar, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -15,37 +15,32 @@ const ResponsiveNavigation = () => {
 
   const athlete = JSON.parse(localStorage.getItem('athlete') || '{}');
   const [userId, setUserId] = useState(athlete._id);
-console.log(userId)
-  const navItems = [
+
+  let navItems = [
     { icon: <Home className="w-5 h-5" />, label: 'Home', link: "home" },
     { icon: <Activity className="w-5 h-5" />, label: 'Strides', link: "strides" },
-    { icon: <Plus className="w-5 h-5" />, label: 'Add Post', link: "add-post" },
     { icon: <Calendar className="w-5 h-5" />, label: 'Events', link: "events" },
     { icon: <User className="w-5 h-5" />, label: 'Profile', link: `profile/${userId}` },
   ];
 
-  // Check viewport width on mount and resize
+  if (!pathname.startsWith('/user/')) {
+    navItems.splice(2, 0, { icon: <Plus className="w-5 h-5" />, label: 'Add Post', link: "add-post" });
+  }
+
   useEffect(() => {
     const checkViewport = () => {
       setIsMobile(window.innerWidth < 768);
     };
-
-    // Initial check
     checkViewport();
-
-    // Add resize listener
     window.addEventListener('resize', checkViewport);
-
-    // Cleanup
     return () => window.removeEventListener('resize', checkViewport);
   }, []);
 
-  // Set active item based on current path
   useEffect(() => {
     const currentPath = pathname.split('/').pop();
     const activeIndex = navItems.findIndex(item => item.link === currentPath);
     setActiveItem(activeIndex !== -1 ? activeIndex : 0);
-  }, [pathname]);
+  }, [pathname, navItems]);
 
   const MobileNavigation = () => (
     <motion.div
@@ -85,7 +80,6 @@ console.log(userId)
       <div className="text-xl font-bold p-2 text-orange-500 border-b border-orange-500/30 pb-4">
         <span className="bg-orange-500 text-black px-2 py-1 rounded mr-2">REKORD</span>
       </div>
-
       <div className="flex flex-col space-y-2">
         {navItems.map((item, index) => (
           <motion.div
@@ -111,11 +105,7 @@ console.log(userId)
     </motion.div>
   );
 
-  return (
-    <>
-      {isMobile ? <MobileNavigation /> : <DesktopNavigation />}
-    </>
-  );
+  return <>{isMobile ? <MobileNavigation /> : <DesktopNavigation />}</>;
 };
 
 export default ResponsiveNavigation;

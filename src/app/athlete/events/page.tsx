@@ -136,7 +136,7 @@ export default function EventsPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 bg-black text-white">
+    <div className="container mb-16 mx-auto px-4 py-8 bg-black text-white">
       <h1 className="text-3xl font-bold mb-8 text-center md:text-4xl text-orange-500">Events</h1>
       
       {/* Live Events Carousel */}
