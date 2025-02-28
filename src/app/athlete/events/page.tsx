@@ -174,7 +174,7 @@ export default function EventsPage() {
               <div 
                 className="absolute inset-0 bg-cover bg-center"
                 style={{ 
-                  backgroundImage: `url(/api/placeholder/1200/600)`, 
+                  backgroundImage: `url("https://api.hindustanuniv.ac.in/uploads/Basketball_Men_Tournament_Copy_c64a5ffe10.jpg")`, 
                   backgroundSize: 'cover'
                 }} 
               />
