@@ -8,7 +8,7 @@ export default function RouteBasedComponents() {
   const pathname = usePathname();
 
   // Check if the current route is under /fund/*
-  const isFundRoute = pathname?.startsWith("/fund") || pathname?.startsWith("/admin");
+  const isFundRoute = pathname?.startsWith("/fund") || pathname?.startsWith("/admin") || pathname?.startsWith("/landing");
 
   // Conditionally render Header and Navigation
   return (
