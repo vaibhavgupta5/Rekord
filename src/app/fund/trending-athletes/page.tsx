@@ -9,72 +9,72 @@ export default function TrendingAthletesPage() {
   const athletes = [
     {
       id: '1', 
-      name: 'Alex Thompson', 
+      name: 'Aarav Mehta', 
       sport: 'Basketball', 
       followers: '1.2M', 
       growth: '+12%',
-      image: '/api/placeholder/300/300',
+      image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRWMuQoRfkGjtD5qEkn9LjXwu6iiX9WZqjGQ&s',
       verified: true,
-      location: 'Chicago, USA',
+      location: 'Mumbai, India',
       achievements: ['National Champion 2024', 'All-Star 2023']
     },
     {
       id: '2', 
-      name: 'Maria Garcia', 
+      name: 'Neha Sharma', 
       sport: 'Tennis', 
       followers: '845K', 
       growth: '+15%',
-      image: '/api/placeholder/300/300',
+      image: 'https://static.toiimg.com/thumb/imgsize-23456,msid-67322094,width-600,resizemode-4/67322094.jpg',
       verified: true,
-      location: 'Madrid, Spain',
-      achievements: ['Grand Slam Finalist', 'Olympic Bronze Medalist']
+      location: 'New Delhi, India',
+      achievements: ['Grand Slam Finalist', 'Asian Games Silver Medalist']
     },
     {
       id: '3', 
-      name: 'James Wilson', 
+      name: 'Rohan Nair', 
       sport: 'Swimming', 
       followers: '650K', 
       growth: '+9%',
-      image: '/api/placeholder/300/300',
+      image: 'https://npr.brightspotcdn.com/dims3/default/strip/false/crop/7075x4869+0+0/resize/1100/quality/50/format/jpeg/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F23%2F54%2Fcadc7d254b478365f7e46711c10d%2Fgettyimages-2168460962.jpg',
       verified: false,
-      location: 'Sydney, Australia',
-      achievements: ['World Championship Silver', '2x National Record Holder']
+      location: 'Bangalore, India',
+      achievements: ['Commonwealth Games Bronze', 'National Record Holder']
     },
     {
       id: '4', 
-      name: 'Sarah Kim', 
+      name: 'Ananya Kapoor', 
       sport: 'Volleyball', 
       followers: '520K', 
       growth: '+18%',
-      image: '/api/placeholder/300/300',
+      image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGlUg6VXTEJEcQyMi5kH47VhYEVjsCKny16w&s',
       verified: true,
-      location: 'Seoul, South Korea',
+      location: 'Chennai, India',
       achievements: ['Professional League MVP 2024', 'National Team Captain']
     },
     {
       id: '5', 
-      name: 'David Johnson', 
+      name: 'Vikram Singh', 
       sport: 'Track & Field', 
       followers: '780K', 
       growth: '+7%',
-      image: '/api/placeholder/300/300',
+      image: 'https://peaklife.in/wp-content/uploads/2024/09/Building-Champions-How-Future-Indian-Athletes-Train-for-Success-Cover-Image.jpeg',
       verified: true,
-      location: 'London, UK',
-      achievements: ['Olympic Gold Medalist', 'European Champion']
+      location: 'Kolkata, India',
+      achievements: ['Olympic Gold Medalist', 'Asian Champion']
     },
     {
       id: '6', 
-      name: 'Olivia Chen', 
+      name: 'Ishita Rao', 
       sport: 'Gymnastics', 
       followers: '930K', 
       growth: '+21%',
-      image: '/api/placeholder/300/300',
+      image: 'https://etvbharatimages.akamaized.net/etvbharat/prod-images/17-07-2024/1200-675-21977507-24-21977507-1721224838470.jpg',
       verified: false,
-      location: 'Boston, USA',
+      location: 'Hyderabad, India',
       achievements: ['World Cup Gold Medalist', 'National Champion']
     },
   ];
-
+  
   const container = {
     hidden: { opacity: 0 },
     show: {

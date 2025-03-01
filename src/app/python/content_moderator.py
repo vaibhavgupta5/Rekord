@@ -7,10 +7,8 @@ from dotenv import load_dotenv
 import time
 from datetime import datetime
 
-# Load environment variables
 load_dotenv()
 
-# Get Cohere API key
 cohere_api_key = os.getenv("COHERE_API_KEY", "3tcFn7pnKShxnPDFu0ZzgLf356fvpLAxKYGtmAqc")
 if not cohere_api_key:
     print(json.dumps({"error": "Missing Cohere API key"}))
@@ -42,10 +40,8 @@ def moderate_content(text):
             # Determine overall flag status
             is_flagged = any(categories.values())
             
-            # Get confidence scores for more detailed analysis
             confidence_scores = {k: float(v) for k, v in mod_result.confidence_scores.items()}
             
-            # Determine highest risk category if flagged
             highest_risk = ""
             highest_score = 0
             
@@ -92,8 +88,6 @@ def process_content_with_pathway(posts_data):
         author_id: str
         created_at: str
     
-    # Create a table from posts data
-    # Normalize the data to ensure it fits our schema
     normalized_posts = []
     for post in posts:
         normalized_posts.append({
@@ -104,23 +98,19 @@ def process_content_with_pathway(posts_data):
             "created_at": post.get("created_at", post.get("createdAt", datetime.now().isoformat()))  # Handle different timestamp fields
         })
     
-    # Set up Pathway computation
     input_collection = pw.debug.table_from_pandas(
         pw.pandas.DataFrame(normalized_posts)
     )
     
-    # Define a batch processing function for moderation
-    # This helps to control API call rate and batching
+ 
     def moderate_batch(batch):
         results = []
         for content in batch:
-            # Add a small delay to avoid rate limits
             time.sleep(0.1)
             results.append(moderate_content(content))
         return results
     
-    # Process in parallel streams with Pathway
-    # First, prepare the data
+    
     prepared_data = input_collection.select(
         id=pw.this.id,
         type=pw.this.type,
@@ -129,9 +119,6 @@ def process_content_with_pathway(posts_data):
         created_at=pw.this.created_at
     )
     
-    # Then apply the moderation in batches
-    # For simplicity, we'll use apply directly, but in production you might
-    # want to use batch processing or Pathway's connectors
     with_moderation = prepared_data.select(
         id=pw.this.id,
         type=pw.this.type,
@@ -141,7 +128,6 @@ def process_content_with_pathway(posts_data):
         moderation_result=pw.apply(moderate_content, pw.this.content)
     )
     
-    # Additional processing: add severity score based on moderation results
     results_with_severity = with_moderation.select(
         id=pw.this.id,
         type=pw.this.type,
@@ -159,7 +145,6 @@ def process_content_with_pathway(posts_data):
         )
     )
     
-    # Add metadata about processing time
     final_results = results_with_severity.select(
         id=pw.this.id,
         type=pw.this.type,
@@ -171,15 +156,12 @@ def process_content_with_pathway(posts_data):
         processed_at=pw.apply(lambda _: datetime.now().isoformat(), pw.this.id)
     )
     
-    # Run the Pathway computation
     result_dataframe = pw.debug.compute_and_fetch(final_results)
     
-    # Convert results to JSON-serializable format
     output_results = []
     for _, row in result_dataframe.iterrows():
         # Convert any non-serializable types
         result_dict = row.to_dict()
-        # Ensure moderation_result is properly formatted
         if isinstance(result_dict["moderation_result"], str):
             try:
                 result_dict["moderation_result"] = json.loads(result_dict["moderation_result"])
@@ -194,7 +176,6 @@ def process_content_with_pathway(posts_data):
     return output_results
 
 if __name__ == "__main__":
-    # Read input from command line argument (a file path)
     if len(sys.argv) < 2:
         print(json.dumps({"error": "No input file provided"}))
         sys.exit(1)
@@ -207,7 +188,6 @@ if __name__ == "__main__":
         print(json.dumps({"error": f"Could not read input file: {str(e)}"}))
         sys.exit(1)
     
-    # Process the input and print results as JSON
     try:
         results = process_content_with_pathway(posts_data)
         print(json.dumps(results))
